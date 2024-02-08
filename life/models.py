@@ -106,3 +106,40 @@ class GenreBoardGame(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class SocialCircle(models.Model):
+    name = models.CharField(
+        'Название',
+        max_length=255
+    )
+    members = models.ManyToManyField(
+        Profile,
+        through='ParticipantSocialCircle',
+        verbose_name='Участники',
+        related_name='social_circles',
+        blank=True
+    )
+
+
+class ParticipantSocialCircle(models.Model):
+    social_circle = models.ForeignKey(
+        SocialCircle,
+        verbose_name='Круг общения',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='participant_social_circles'
+    )
+    person = models.ForeignKey(
+        Profile,
+        verbose_name='Участник',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='participants'
+    )
+    theme = models.CharField(
+        'Тема',
+        max_length=255
+    )
