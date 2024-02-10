@@ -16,6 +16,21 @@ GENRE_BOARD_GAMES = [
 ]
 
 
+class Ordering(models.Model):
+    class Meta:
+        abstract = True
+        ordering = ['-name']
+
+
+class Name(models.Model):
+    name = models.CharField(
+        'Название',
+        max_length=255
+    )
+    class Meta:
+        abstract = True
+
+
 class User(DjangoUser):
 
     class Meta:
@@ -26,6 +41,10 @@ class User(DjangoUser):
 
 
 class Profile(models.Model):
+    avatar = models.ImageField(
+        verbose_name='Аватар',
+        upload_to='avatar/'
+    )
     user = models.OneToOneField(
         User,
         verbose_name='профиль',
@@ -59,11 +78,7 @@ class Profile(models.Model):
         return f'{self.last_name} {self.first_name} {self.patronymic}'
 
 
-class BoardGame(models.Model):
-    name = models.CharField(
-        'Название',
-        max_length=255
-    )
+class BoardGame(Ordering, Name):
     count_players = models.SmallIntegerField(
         'Количество игроков'
     )
@@ -81,7 +96,7 @@ class BoardGame(models.Model):
         related_name='board_games'
     )
 
-    class Meta:
+    class Meta(Ordering.Meta):
         verbose_name = 'Настольная игра'
         verbose_name_plural = 'Настольные игры'
 
@@ -108,7 +123,7 @@ class GenreBoardGame(models.Model):
         return self.name
 
 
-class SocialCircle(models.Model):
+class SocialCircle(Name):
     name = models.CharField(
         'Название',
         max_length=255
@@ -120,6 +135,10 @@ class SocialCircle(models.Model):
         related_name='social_circles',
         blank=True
     )
+
+    class Meta:
+        verbose_name = 'Круг общения'
+        verbose_name_plural = 'Круги общения'
 
 
 class ParticipantSocialCircle(models.Model):
@@ -143,3 +162,7 @@ class ParticipantSocialCircle(models.Model):
         'Тема',
         max_length=255
     )
+
+    class Meta:
+        verbose_name = 'Участники круга общения'
+        verbose_name_plural = 'Участники кругов общения'
